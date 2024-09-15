@@ -36,20 +36,4 @@ async function loginUser(req, res) {
   }
 }
 
-async function getUserInfo(req, res) {
-  const id = req.user.id;
-  try {
-    const user = await User.findOne({ _id: id });
-    if (!user) {
-      return res
-        .status(200)
-        .send({ message: "User not found", success: false });
-    } else {
-      res.status(202).send({ user: user, success: true });
-    }
-  } catch (error) {
-    res.status(500).send({ error });
-  }
-}
-
-module.exports = { registerUser, loginUser, getUserInfo };
+module.exports = { registerUser, loginUser };
