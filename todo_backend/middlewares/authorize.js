@@ -16,10 +16,3 @@ exports.auth = (req, res, next) => {
         return res.status(401).json({ msg: 'Token is not valid' });
     }
 };
-
-exports.admin = (req, res, next) => {
-    if (req.user.role !== 'admin') {
-        return res.status(403).json({ msg: 'Access denied, admin only' });
-    }
-    next();
-};
