@@ -1,15 +1,16 @@
 const mongoose = require("mongoose");
 
-const categorySchema = mongoose.Schema(
-  {
-    name: { type: String, required: true },
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
+const categorySchema = mongoose.Schema({
+  categoryName: { type: String, required: true },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
   },
-  { timestamps: true }
-);
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
 module.exports = mongoose.model("Category", categorySchema);
