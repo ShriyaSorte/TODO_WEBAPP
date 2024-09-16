@@ -6,3 +6,5 @@ const router = express.Router();
 router.post("/invitation", inviteController.invitation);
 
 module.exports = router;
+
+// http://localhost:4001/api/invites/invitation

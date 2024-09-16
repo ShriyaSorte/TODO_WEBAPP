@@ -3,7 +3,7 @@ const taskmodel = require('../models/taskModel');
 
 async function invitation(req, res) {
   console.log(req.body);
-  const userid = req.user.id;
+  // const userid = req.user.id;
 
   const { task, invitedUser, status, invitedAt } = req.body;
 
@@ -28,7 +28,7 @@ async function invitation(req, res) {
       task,
       invitedUser,
       status,
-      invitedAt: invitedAt || Date.now(), // Use provided date or current date
+      invitedAt: invitedAt || Date.now(), 
     });
 
     await newInvite.save();
