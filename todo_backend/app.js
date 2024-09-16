@@ -5,6 +5,7 @@ const userRoute = require("./routes/userRoute");
 const taskRoute = require('./routes/taskRoute');
 const categoryRoute = require('./routes/categoryRoute');
 const inviteRoute = require('./routes/inviteRoute');
+const priorityRoute = require('./routes/priorityRoute');
 const port = 4001;
 
 const app = express();
@@ -22,6 +23,7 @@ app.use("/api/users", userRoute);
 app.use('/api/tasks', taskRoute);
 app.use('/api/category', categoryRoute);
 app.use('/api/invites', inviteRoute);
+app.use('/api/priorities', priorityRoute);
 
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
