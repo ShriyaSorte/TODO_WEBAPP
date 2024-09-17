@@ -1,36 +1,54 @@
-import { Link } from "react-router-dom";
+import React from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import profileImg from "../assets/profile_ss.jpg"; // Replace with your image path
+import Navbar from "../components/Navbar";
 
-const Dashboard = () => {
+const Sidebar = () => {
   return (
-    <div className="container-fluid">
-      <div className="row">
-        {/* Sidebar */}
-        <nav className="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-          <div className="position-sticky">
-            <ul className="nav flex-column">
-              <li className="nav-item">
-                <Link to="/mytasks" className="nav-link active">
-                  My Tasks
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/categories" className="nav-link">
-                  Task Categories
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </nav>
-
-        {/* Main content */}
-        <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-          <h2 className="mt-4">Welcome to the Dashboard</h2>
-          <p>Here are your tasks and task statistics.</p>
-          <button className="btn btn-primary">Invite Users</button>
-        </main>
+    <>
+      <div>
+        <Navbar />
       </div>
-    </div>
+      <div
+        className="d-flex flex-column p-3 bg-light"
+        style={{ width: "250px", minHeight: "100vh" }}
+      >
+        {/* Profile Image */}
+        <div className="d-flex justify-content-center mb-4">
+          <img
+            src={profileImg}
+            alt="Profile"
+            className="img-fluid rounded-circle"
+            style={{ width: "100px", height: "100px", objectFit: "cover" }}
+          />
+        </div>
+
+        {/* Sidebar Links */}
+        <ul className="nav flex-column">
+          <li className="nav-item mb-2">
+            <a className="nav-link active" href="#">
+              Dashboard
+            </a>
+          </li>
+          <li className="nav-item mb-2">
+            <a className="nav-link" href="#">
+              Profile
+            </a>
+          </li>
+          <li className="nav-item mb-2">
+            <a className="nav-link" href="#">
+              Settings
+            </a>
+          </li>
+          <li className="nav-item mb-2">
+            <a className="nav-link" href="#">
+              Logout
+            </a>
+          </li>
+        </ul>
+      </div>
+    </>
   );
 };
 
-export default Dashboard;
+export default Sidebar;
