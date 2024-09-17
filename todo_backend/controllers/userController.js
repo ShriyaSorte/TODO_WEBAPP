@@ -4,11 +4,19 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 async function registerUser(req, res) {
-  const { username, email, password, mobileNumber, role } = req.body;
+  const { firstName, lastName, username, email, password, confirmPassword } =
+    req.body;
   try {
     const existUser = await User.findOne({ email });
     if (!existUser) {
-      const user = new User({ username, email, password, mobileNumber, role });
+      const user = new User({
+        firstName,
+        lastName,
+        username,
+        email,
+        password,
+        confirmPassword,
+      });
       await user.save();
       return res.status(201).send({ message: "User registered successfully" });
     } else {
@@ -21,13 +29,13 @@ async function registerUser(req, res) {
 
 async function loginUser(req, res) {
   try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const { username, password } = req.body;
+    const user = await User.findOne({ username });
     if (!user || !(await user.comparePassword(password))) {
       return res.status(400).send({ error: "Invalid login credentials" });
     }
-    const payload = { user: { id: user._id, role: user.role } };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+   
+    const token = jwt.sign({ id: user._id}, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
     res.status(200).send({ token: token, message: "LoggedIn successfully" });

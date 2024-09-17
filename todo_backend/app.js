@@ -6,6 +6,7 @@ const taskRoute = require('./routes/taskRoute');
 const categoryRoute = require('./routes/categoryRoute');
 const inviteRoute = require('./routes/inviteRoute');
 const priorityRoute = require('./routes/priorityRoute');
+const cors = require('cors');
 const port = 4001;
 
 const app = express();
@@ -19,6 +20,7 @@ mongoose.connection.once("open", () => {
   console.log("Connected to MongoDB");
 });
 
+app.use(cors({ origin: 'http://localhost:5173'}));
 app.use("/api/users", userRoute);
 app.use('/api/tasks', taskRoute);
 app.use('/api/category', categoryRoute);
