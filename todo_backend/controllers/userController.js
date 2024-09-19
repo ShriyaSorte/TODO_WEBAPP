@@ -34,14 +34,32 @@ async function loginUser(req, res) {
     if (!user || !(await user.comparePassword(password))) {
       return res.status(400).send({ error: "Invalid login credentials" });
     }
-   
-    const token = jwt.sign({ id: user._id}, process.env.JWT_SECRET, {
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-    res.status(200).send({ token: token, message: "LoggedIn successfully" });
+
+    // Returning the token as accessToken
+    res
+      .status(200)
+      .send({ accessToken: token, message: "LoggedIn successfully" });
   } catch (error) {
     res.status(500).send(error);
   }
 }
 
-module.exports = { registerUser, loginUser };
+async function getUserInfo(req, res) {
+  const id = req.user.id; // `req.user` should be populated by the auth middleware
+  try {
+    const user = await User.findOne({ _id: id });
+    if (!user) {
+      return res
+        .status(404)
+        .send({ message: "User not found", success: false });
+    }
+    res.status(200).send({ user, success: true });
+  } catch (error) {
+    res.status(500).send({ error: "Internal server error" });
+  }
+}
+module.exports = { registerUser, loginUser, getUserInfo };
