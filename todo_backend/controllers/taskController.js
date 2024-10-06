@@ -83,12 +83,10 @@ async function getTaskById(req, res) {
     return res.status(201).send({ msg: "This is task", task, success: true });
   } catch (error) {
     console.error("Error fetching task by ID:", error.message); // Log the error for debugging
-    res
-      .status(500)
-      .send({
-        error: error.message || "Internal Server Error",
-        success: false,
-      });
+    res.status(500).send({
+      error: error.message || "Internal Server Error",
+      success: false,
+    });
   }
 }
 
@@ -111,28 +109,41 @@ const getFilteredTasks = async (req, res) => {
 };
 
 async function updateTask(req, res) {
-  console.log(req.body);
   const { id: taskid } = req.params;
-  const { title, description, category, priority, createdBy, collaboraters } =
-    req.body;
+  const {
+    title,
+    description,
+    category,
+    priority,
+    createdBy,
+    collaboraters,
+    status,
+  } = req.body;
   try {
-    const task = await taskmodel.findByIdAndUpdate(taskid);
+    const task = await taskmodel.findByIdAndUpdate(
+      taskid,
+      {
+        title,
+        description,
+        category,
+        priority,
+        createdBy,
+        collaboraters,
+        status,
+      },
+      { new: true } // This ensures the updated document is returned
+    );
+
     if (!task) {
-      res.status(404).send({ msg: "product id is not found" });
+      return res.status(404).send({ msg: "Task id is not found" });
     }
-    task.title = title || task.title;
-    task.description = description || task.description;
-    task.category = category || task.category;
-    task.priority = priority || task.priority;
-    // task.image = image || task.image;
-    task.createdBy = createdBy || task.createdBy;
-    task.collaboraters = collaboraters || task.collaboraters;
-    await task.save();
+
     res
-      .status(201)
+      .status(200)
       .send({ message: "Task Updated successfully", success: true });
   } catch (error) {
-    res.status(500).send({ error: "Server error", true: false });
+    console.error("Error updating task:", error); // Log the error for debugging
+    res.status(500).send({ error: "Server error", success: false });
   }
 }
 
@@ -150,6 +161,23 @@ async function deleteTask(req, res) {
   }
 }
 
+const getTodayTasks = async (req, res) => {
+  try {
+    const startOfDay = new Date().setHours(0, 0, 0, 0);
+    const endOfDay = new Date().setHours(23, 59, 59, 999);
+    
+    const tasks = await taskmodel.find({
+      createdBy: req.user.id,
+      dueDate: { $gte: startOfDay, $lte: endOfDay }
+    });
+    
+    return res.status(200).send(tasks);
+  } catch (error) {
+    return res.status(500).send({ message: error.message });
+  }
+};
+
+
 module.exports = {
   createTask,
   getAllTasks,
@@ -157,5 +185,6 @@ module.exports = {
   getFilteredTasks,
   updateTask,
   deleteTask,
+  getTodayTasks,
   addCollaborator,
 };
