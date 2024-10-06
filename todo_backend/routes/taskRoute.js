@@ -15,6 +15,8 @@ router.put("/updateTask/:id", auth, taskController.updateTask);
 // DELETE
 router.delete("/deleteTask/:id", auth, taskController.deleteTask);
 
+router.get("/getTodayTasks", auth, taskController.getTodayTasks);
+
 module.exports = router;
 
 // http://localhost:4001/api/tasks/createTask
