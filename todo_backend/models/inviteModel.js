@@ -13,7 +13,7 @@ const InviteSchema = mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["Not started", "Completed", "In-progress"],
+    enum: ["Not started", "Completed", "In Progress"],
     default: "Not started",
   },
   invitedAt: {
