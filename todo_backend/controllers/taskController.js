@@ -93,7 +93,8 @@ async function getTaskById(req, res) {
 const getFilteredTasks = async (req, res) => {
   try {
     const tasks = await taskmodel.find({
-      priority: { $in: ["Medium", "High"] },
+      createdBy: req.user.id, // Filter tasks by the logged-in user's ID
+      priority: { $in: ["Medium", "High", "Low"] }, // Example filter based on priority
     });
 
     res.status(201).send({
@@ -165,18 +166,17 @@ const getTodayTasks = async (req, res) => {
   try {
     const startOfDay = new Date().setHours(0, 0, 0, 0);
     const endOfDay = new Date().setHours(23, 59, 59, 999);
-    
+
     const tasks = await taskmodel.find({
       createdBy: req.user.id,
-      dueDate: { $gte: startOfDay, $lte: endOfDay }
+      dueDate: { $gte: startOfDay, $lte: endOfDay },
     });
-    
+
     return res.status(200).send(tasks);
   } catch (error) {
     return res.status(500).send({ message: error.message });
   }
 };
-
 
 module.exports = {
   createTask,

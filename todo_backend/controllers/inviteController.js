@@ -7,7 +7,7 @@ async function invitation(req, res) {
 
   const { task, invitedUser, status, invitedAt } = req.body;
 
-  const validStatuses = ['Not started', 'In-progress', 'Completed'];
+  const validStatuses = ['Not started', 'In Progress', 'Completed'];
 
   if (!validStatuses.includes(status)) {
     return res.status(400).send({ msg: 'Invalid status value', success: false });

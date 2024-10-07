@@ -62,4 +62,16 @@ async function getUserInfo(req, res) {
     res.status(500).send({ error: "Internal server error" });
   }
 }
-module.exports = { registerUser, loginUser, getUserInfo };
+
+// Add this function to your user controller
+async function getAllUsers(req, res) {
+  try {
+    const users = await User.find({}, 'email'); // Adjust fields as necessary
+    res.status(200).send({ users, success: true });
+  } catch (error) {
+    res.status(500).send({ error: 'Internal server error' });
+  }
+}
+
+
+module.exports = { registerUser, loginUser, getUserInfo, getAllUsers };
