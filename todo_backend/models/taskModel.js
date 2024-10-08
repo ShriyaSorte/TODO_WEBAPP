@@ -24,6 +24,7 @@ const taskSchema = mongoose.Schema(
         permission: { type: String, enum: ["Edit", "View"] },
       },
     ],
+    image: { type: String },
   },
   { timestamps: true }
 );

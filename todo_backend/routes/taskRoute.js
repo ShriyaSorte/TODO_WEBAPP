@@ -2,29 +2,57 @@ const express = require("express");
 const taskController = require("../controllers/taskController");
 const { auth } = require("../middlewares/authorize");
 const multer = require("multer");
+const path = require("path");
 
-// Configure multer for file uploads
-const upload = multer({ dest: 'uploads/' }); // Change the 'uploads/' path as needed
+// Set up multer storage configuration
+const upload = multer({
+  dest: "uploads/",
+  limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+  fileFilter: (req, file, cb) => {
+    // Accept only certain file types
+    const filetypes = /jpeg|jpg|png|gif/; // Allowed file types
+    const extname = filetypes.test(
+      path.extname(file.originalname).toLowerCase()
+    );
+    const mimetype = filetypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true); // Accept file
+    } else {
+      cb(new Error("Error: File type not supported!")); // Reject file
+    }
+  },
+});
 
 const router = express.Router();
 
-// POST
-// Use multer to handle file uploads for createTask
-router.post("/createTask", auth, upload.single('image'), taskController.createTask);
+// Create Task Route
+router.post(
+  "/createTask",
+  auth,
+  upload.single("image"),
+  taskController.createTask
+);
+
+// Add Collaborator Route
 router.post("/addCollaborator", auth, taskController.addCollaborator);
 
-// GET
+// Get All Tasks Route
 router.get("/getAllTasks", auth, taskController.getAllTasks);
+
+// Get Task by ID Route
 router.get("/getTaskById/:id", auth, taskController.getTaskById);
+
+// Get Filtered Tasks Route
 router.get("/getFilteredTasks", auth, taskController.getFilteredTasks);
 
-// UPDATE
+// Update Task Route
 router.put("/updateTask/:id", auth, taskController.updateTask);
 
-// DELETE
+// Delete Task Route
 router.delete("/deleteTask/:id", auth, taskController.deleteTask);
 
-// Additional endpoint for getting today's tasks
+// Get Today's Tasks Route
 router.get("/getTodayTasks", auth, taskController.getTodayTasks);
 
 module.exports = router;

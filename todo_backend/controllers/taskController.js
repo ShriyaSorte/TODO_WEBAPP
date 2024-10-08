@@ -5,6 +5,10 @@ const createTask = async (req, res) => {
     const { title, description, dueDate, priority, status, collaborators } =
       req.body;
 
+    // Get the image path from the uploaded file
+    const imagePath = req.file ? req.file.path : null; // Retrieves the uploaded image path
+
+    // Create a new task with the provided details and the image path
     const task = new taskmodel({
       title,
       description,
@@ -13,11 +17,16 @@ const createTask = async (req, res) => {
       createdBy: req.user.id,
       status,
       collaborators,
+      image: imagePath, // Save the image path in the task
     });
 
+    // Save the task to the database
     const createdTask = await task.save();
+
+    // Return the created task as a response
     return res.status(201).send(createdTask);
   } catch (error) {
+    // Handle any errors that occur during task creation
     return res.status(500).send({ message: error.message });
   }
 };
