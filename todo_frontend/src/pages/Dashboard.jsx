@@ -12,16 +12,17 @@ import { IoLogOut } from "react-icons/io5";
 import axios from "axios";
 import { Link, useLocation } from "react-router-dom";
 import VitalTask from "../components/other items/VitalTask";
-// Example imports for other components
-// import MyTask from "../components/other items/MyTask";
-// import TaskCategories from "../components/other items/TaskCategories";
-// import Settings from "../components/other items/Settings";
-// import Help from "../components/other items/Help";
+import MyTask from "../components/other items/MyTask";
+import TaskCategories from "../components/other items/TaskCategories";
+import TaskDashboard from "../components/other items/TaskDashboard";
+import InviteModal from "../components/other items/InviteModal";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [selected, setSelected] = useState(null);
+  const [showInviteModal, setShowInviteModal] = useState(false); // State to control modal visibility
+  const [currentTaskId, setCurrentTaskId] = useState(null); // State for the current task ID
 
   const location = useLocation();
 
@@ -65,9 +66,25 @@ const Dashboard = () => {
     console.log("Logout clicked");
   };
 
+  // Function to handle opening the invite modal
+  const handleInvite = (taskId) => {
+    setCurrentTaskId(taskId); // Set the current task ID to pass to the modal
+    setShowInviteModal(true);
+  };
+
   return (
     <>
       <Navbar />
+
+      <div className="d-flex justify-content-end mr-3">
+        <button
+          className="btn btn-light text-danger"
+          onClick={() => handleInvite("your-task-id-here")}
+        >
+          Invite
+        </button>
+      </div>
+
       <div className="d-flex">
         {/* Sidebar */}
         <div
@@ -186,13 +203,20 @@ const Dashboard = () => {
         {/* Main Content Area */}
         <div className="flex-grow-1 p-4">
           {location.pathname === "/dashboard/vital-task" && <VitalTask />}
-          {/* {location.pathname === '/dashboard/my-task' && <MyTask />}
-          {location.pathname === '/dashboard/task-categories' && <TaskCategories />}
-          {location.pathname === '/dashboard/settings' && <Settings />}
-          {location.pathname === '/dashboard/help' && <Help />}
-          {location.pathname === '/dashboard' && <div>Select an option from the sidebar</div>} */}
+          {location.pathname === "/dashboard/my-task" && <MyTask />}
+          {location.pathname === "/dashboard/task-categories" && (
+            <TaskCategories />
+          )}
+          {location.pathname === "/dashboard" && <TaskDashboard />}
         </div>
       </div>
+
+      {/* Invite Modal */}
+      <InviteModal
+        show={showInviteModal}
+        onHide={() => setShowInviteModal(false)}
+        taskId={currentTaskId}
+      />
     </>
   );
 };
