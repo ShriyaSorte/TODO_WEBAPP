@@ -10,7 +10,7 @@ const cors = require('cors');
 const port = 4001;
 
 const app = express();
-
+app.use('/uploads', express.static('uploads'));
 app.use(express.json());
 app.use(bodyParser.json());
 
