@@ -6,11 +6,12 @@ const taskRoute = require('./routes/taskRoute');
 const categoryRoute = require('./routes/categoryRoute');
 const inviteRoute = require('./routes/inviteRoute');
 const priorityRoute = require('./routes/priorityRoute');
+const path = require('path');
 const cors = require('cors');
 const port = 4001;
 
 const app = express();
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
 app.use(bodyParser.json());
 
