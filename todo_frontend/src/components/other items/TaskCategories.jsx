@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Table, Card, Row, Col, Modal, Form } from "react-bootstrap";
+import { Button, Table, Modal, Form } from "react-bootstrap"; // Import Modal
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
@@ -20,10 +20,13 @@ const TaskCategories = () => {
   ]);
 
   const [showModal, setShowModal] = useState(false);
+  const [showEditStatusModal, setShowEditStatusModal] = useState(false); // For edit status modal
+  const [showEditPriorityModal, setShowEditPriorityModal] = useState(false); // For edit priority modal
   const [categoryName, setCategoryName] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState(null);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [newStatusName, setNewStatusName] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState(null); // Store the status being edited
+  const [newStatusName, setNewStatusName] = useState(""); // Store the new name for the status
+  const [selectedPriority, setSelectedPriority] = useState(null); // Store the priority being edited
+  const [newPriorityName, setNewPriorityName] = useState(""); // Store the new name for the priority
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,226 +49,333 @@ const TaskCategories = () => {
     }
   };
 
-  const handleEdit = (statusId) => {
+  // Open the edit status modal and set the current status to edit
+  const handleEditStatus = (statusId) => {
     const statusToEdit = taskStatus.find((status) => status.id === statusId);
     if (statusToEdit) {
       setSelectedStatus(statusToEdit);
       setNewStatusName(statusToEdit.name);
-      setShowEditModal(true);
+      setShowEditStatusModal(true); // Open edit status modal
     }
   };
 
-  const handleUpdateStatus = async (e) => {
+  // Handle the submission of the edited status
+  const handleEditStatusSubmit = async (e) => {
     e.preventDefault();
-    console.log("Updating status ID:", selectedStatus.id);
-    console.log("New status name:", newStatusName);
-    
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.put(
-        `http://localhost:4001/api/tasks/updateTask/${selectedStatus.id}`,
-        { status: newStatusName },
-        {
+    if (selectedStatus) {
+      const updatedStatus = {
+        ...selectedStatus,
+        name: newStatusName,
+      };
+      setTaskStatus((prev) =>
+        prev.map((status) =>
+          status.id === updatedStatus.id ? updatedStatus : status
+        )
+      );
+
+      // Optionally, make an API call to update the status on the server
+      try {
+        const token = localStorage.getItem("token");
+        await axios.put(`http://localhost:4001/api/tasks/updateTask/${updatedStatus.id}`, updatedStatus, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
-      );
-      console.log("Response from server:", response.data);
-      alert("Task status updated successfully");
-      fetchTasks(); 
-      setShowEditModal(false);
-    } catch (error) {
-      console.error("Error updating task status:", error);
-      alert("Failed to update task status");
+        });
+        alert("Task status updated successfully");
+      } catch (error) {
+        console.error("Error updating task status", error);
+        alert("Failed to update task status");
+      }
+
+      setShowEditStatusModal(false); // Close the edit status modal
     }
   };
-  
 
-  const handleDelete = async (statusId) => {
+  // Open the edit priority modal and set the current priority to edit
+  const handleEditPriority = (priorityId) => {
+    const priorityToEdit = taskPriority.find((priority) => priority.id === priorityId);
+    if (priorityToEdit) {
+      setSelectedPriority(priorityToEdit);
+      setNewPriorityName(priorityToEdit.name);
+      setShowEditPriorityModal(true); // Open edit priority modal
+    }
+  };
+
+  // Handle the submission of the edited priority
+  const handleEditPrioritySubmit = async (e) => {
+    e.preventDefault();
+    if (selectedPriority) {
+      const updatedPriority = {
+        ...selectedPriority,
+        name: newPriorityName,
+      };
+      setTaskPriority((prev) =>
+        prev.map((priority) =>
+          priority.id === updatedPriority.id ? updatedPriority : priority
+        )
+      );
+
+      // Optionally, make an API call to update the priority on the server
+      try {
+        const token = localStorage.getItem("token");
+        await axios.put(`http://localhost:4001/api/tasks/updatePriority/${updatedPriority.id}`, updatedPriority, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        alert("Task priority updated successfully");
+      } catch (error) {
+        console.error("Error updating task priority", error);
+        alert("Failed to update task priority");
+      }
+
+      setShowEditPriorityModal(false); // Close the edit priority modal
+    }
+  };
+
+  const handleDeleteStatus = async (statusId) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:4001/api/task/delete/${statusId}`, {
+      await axios.delete(`http://localhost:4001/api/tasks/deleteTask/${statusId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       alert("Task status deleted successfully");
-      // Refresh task status if needed
+      // Remove the deleted status from the state
+      setTaskStatus(taskStatus.filter((status) => status.id !== statusId));
     } catch (error) {
       console.error("Error deleting task status", error);
       alert("Failed to delete task status");
     }
   };
 
+  const handleDeletePriority = async (priorityId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`http://localhost:4001/api/tasks/deletePriority/${priorityId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      alert("Task priority deleted successfully");
+      // Remove the deleted priority from the state
+      setTaskPriority(taskPriority.filter((priority) => priority.id !== priorityId));
+    } catch (error) {
+      console.error("Error deleting task priority", error);
+      alert("Failed to delete task priority");
+    }
+  };
+
   return (
-    <div className="container mt-5">
-      {/* Header Section */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="text-center">Task Categories</h2>
-        <Link to={"/dashboard/taskDashboard"}>
-          <Button variant="outline-dark">Go Back</Button>
-        </Link>
+    <div className="task-categories-container rounded" style={{ border: "1px solid black" }}>
+      <div className="d-flex justify-content-between align-items-center mb-3" style={{ padding: "8px", marginTop: "10px" }}>
+        <div style={{ marginLeft: "30px" }}>
+          <h2>Task Categories</h2>
+          <Button
+            variant="danger"
+            className="mb-3 btn-md"
+            onClick={() => setShowModal(true)} // Open modal on button click
+            style={{ backgroundColor: "#f24e1e", marginTop: "5px" }}
+          >
+            Add Category
+          </Button>
+        </div>
+        <div className="button" style={{ color: "black", listStyle: "none", marginRight: "20px" }}>
+          <Link to={"/dashboard"} style={{ textDecoration: "underline", color: "black" }}>
+            <span type="button">Go Back</span>
+          </Link>
+        </div>
       </div>
 
-      {/* Add Category Button */}
-      <Button
-        variant="warning"
-        className="mb-4"
-        onClick={() => setShowModal(true)}
-      >
-        + Add New Category
-      </Button>
-
-      {/* Modal for adding a new category */}
+      {/* Modal for adding a category */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Add New Category</Modal.Title>
+          <Modal.Title>Create Categories</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3">
-              <Form.Label>Category Name</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter category name"
-                value={categoryName}
-                onChange={(e) => setCategoryName(e.target.value)}
-                required
-              />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-              Add Category
-            </Button>
+            <label style={{ marginBottom: "5px", color: "black" }}>Category Name</label>
+            <input
+              type="text"
+              value={categoryName}
+              onChange={(e) => setCategoryName(e.target.value)}
+              className="form-control"
+            />
+
+            <Modal.Footer className="d-flex justify-content-start">
+              <Button onClick={handleSubmit} style={{ backgroundColor: "#f24e1e", marginRight: "10px" }}>
+                Create
+              </Button>
+              <Button onClick={() => setShowModal(false)} style={{ backgroundColor: "#f24e1e" }}>
+                Cancel
+              </Button>
+            </Modal.Footer>
           </Form>
         </Modal.Body>
       </Modal>
 
-      {/* Edit Status Modal */}
-      <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+      {/* Modal for editing a task status */}
+      <Modal show={showEditStatusModal} onHide={() => setShowEditStatusModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Edit Task Status</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form onSubmit={handleUpdateStatus}>
-            <Form.Group className="mb-3">
-              <Form.Label>Status Name</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter new status name"
-                value={newStatusName}
-                onChange={(e) => setNewStatusName(e.target.value)}
-                required
-              />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-              Update Status
-            </Button>
+          <Form onSubmit={handleEditStatusSubmit}>
+            <label style={{ marginBottom: "5px", color: "black" }}>Task Status Name</label>
+            <input
+              type="text"
+              value={newStatusName}
+              onChange={(e) => setNewStatusName(e.target.value)}
+              className="form-control"
+            />
+
+            <Modal.Footer className="d-flex justify-content-start">
+              <Button type="submit" style={{ backgroundColor: "#f24e1e", marginRight: "10px" }}>
+                Update
+              </Button>
+              <Button onClick={() => setShowEditStatusModal(false)} style={{ backgroundColor: "#f24e1e" }}>
+                Cancel
+              </Button>
+            </Modal.Footer>
           </Form>
         </Modal.Body>
       </Modal>
 
-      <Row>
-        {/* Task Status Section */}
-        <Col md={6}>
-          <Card className="mb-4">
-            <Card.Header
-              as="h4"
-              className="text-center text-white"
-              style={{ backgroundColor: "#ff6767" }}
-            >
-              Task Status
-            </Card.Header>
-            <Card.Body>
-              <Button variant="outline-primary" className="mb-3 w-100">
-                + Add Task Status
-              </Button>
-              <Table bordered responsive>
-                <thead>
-                  <tr>
-                    <th>S.N.</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {taskStatus.map((status, index) => (
-                    <tr key={status.id}>
-                      <td>{index + 1}</td>
-                      <td>{status.name}</td>
-                      <td>
-                        <Button
-                          variant="outline-warning"
-                          onClick={() => handleEdit(status.id)}
-                          className="me-2"
-                        >
-                          <FontAwesomeIcon icon={faEdit} />
-                        </Button>
-                        <Button
-                          variant="outline-danger"
-                          onClick={() => handleDelete(status.id)}
-                        >
-                          <FontAwesomeIcon icon={faTrashAlt} />
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </Card.Body>
-          </Card>
-        </Col>
+      {/* Modal for editing a task priority */}
+      <Modal show={showEditPriorityModal} onHide={() => setShowEditPriorityModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Task Priority</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleEditPrioritySubmit}>
+            <label style={{ marginBottom: "5px", color: "black" }}>Task Priority Title</label>
+            <input
+              type="text"
+              value={newPriorityName}
+              onChange={(e) => setNewPriorityName(e.target.value)}
+              className="form-control"
+            />
 
-        {/* Task Priority Section */}
-        <Col md={6}>
-          <Card className="mb-4">
-            <Card.Header
-              as="h4"
-              className="text-center text-white"
-              style={{ backgroundColor: "#ff6767" }}
-            >
-              Task Priority
-            </Card.Header>
-            <Card.Body>
-              <Button variant="outline-primary" className="mb-3 w-100">
-                + Add New Priority
+            <Modal.Footer className="d-flex justify-content-start">
+              <Button type="submit" style={{ backgroundColor: "#f24e1e", marginRight: "10px" }}>
+                Update
               </Button>
-              <Table bordered responsive>
-                <thead>
-                  <tr>
-                    <th>S.N.</th>
-                    <th>Priority</th>
-                    <th>Action</th>
+              <Button onClick={() => setShowEditPriorityModal(false)} style={{ backgroundColor: "#f24e1e" }}>
+                Cancel
+              </Button>
+            </Modal.Footer>
+          </Form>
+        </Modal.Body>
+      </Modal>
+
+      {/* Remaining component code */}
+      <div className="container">
+        <div className="row justify-content-center">
+          <div className="col-md-8">
+            <div className="d-flex justify-content-between align-items-center mb-1">
+              <h4 style={{ textAlign: "left", marginBottom: "0px" }}>Task Status</h4>
+              <Button variant="button">
+                <span style={{ color: "#f24e1e" }}>+</span> Add Task Status
+              </Button>
+            </div>
+
+            <Table bordered>
+              <thead className="text-center">
+                <tr>
+                  <th>SN</th>
+                  <th>Task Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody className="text-center">
+                {taskStatus.map((status, index) => (
+                  <tr key={status.id}>
+                    <td>{index + 1}</td>
+                    <td>{status.name}</td>
+                    <td>
+                      <Button
+                        onClick={() => handleEditStatus(status.id)} // Update this line
+                        className="me-2 btn-sm"
+                        style={{
+                          backgroundColor: "#f24e1e",
+                          borderColor: "#f24e1e",
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faEdit} /> Edit
+                      </Button>
+
+                      <Button
+                        onClick={() => handleDeleteStatus(status.id)} // Update this line
+                        className="me-2 btn-sm"
+                        style={{
+                          backgroundColor: "#f24e1e",
+                          borderColor: "#f24e1e",
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faTrashAlt} /> Delete
+                      </Button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {taskPriority.map((priority, index) => (
-                    <tr key={priority.id}>
-                      <td>{index + 1}</td>
-                      <td>{priority.name}</td>
-                      <td>
-                        <Button
-                          variant="outline-warning"
-                          onClick={() => handleEdit("priority", priority.id)}
-                          className="me-2"
-                        >
-                          <FontAwesomeIcon icon={faEdit} />
-                        </Button>
-                        <Button
-                          variant="outline-danger"
-                          onClick={() => handleDelete("priority", priority.id)}
-                        >
-                          <FontAwesomeIcon icon={faTrashAlt} />
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+        </div>
+      </div>
+
+      <div className="container">
+        <div className="row justify-content-center">
+          <div className="col-md-8">
+            <div className="d-flex justify-content-between align-items-center mb-1" style={{ marginTop: "20px" }}>
+              <h4 style={{ textAlign: "left", marginBottom: "0px" }}>Task Priority</h4>
+              <Button variant="button" onClick={() => setShowEditPriorityModal(true)}>
+                <span style={{ color: "#f24e1e" }}>+</span> Add New Priority
+              </Button>
+            </div>
+
+            <Table bordered>
+              <thead className="text-center">
+                <tr>
+                  <th>SN</th>
+                  <th>Task Priority</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody className="text-center">
+                {taskPriority.map((priority, index) => (
+                  <tr key={priority.id}>
+                    <td>{index + 1}</td>
+                    <td>{priority.name}</td>
+                    <td>
+                      <Button
+                        onClick={() => handleEditPriority(priority.id)} // Now calls the priority edit function
+                        className="me-2 btn-sm"
+                        style={{
+                          backgroundColor: "#f24e1e",
+                          borderColor: "#f24e1e",
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faEdit} /> Edit
+                      </Button>
+                      <Button
+                        onClick={() => handleDeletePriority(priority.id)} // Calls the delete priority function
+                        className="me-2 btn-sm"
+                        style={{
+                          backgroundColor: "#f24e1e",
+                          borderColor: "#f24e1e",
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faTrashAlt} /> Delete
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

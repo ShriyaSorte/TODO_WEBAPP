@@ -24,7 +24,7 @@ function AddTaskModal({ show, onHide, onAddTask }) {
   };
 
   const handleImageChange = (e) => {
-    setImage(e.target.files[0]); // Capture the file
+    setImage(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
@@ -42,13 +42,13 @@ function AddTaskModal({ show, onHide, onAddTask }) {
     }
 
     const formData = new FormData();
-    formData.append("title", title); // Append title
-    formData.append("dueDate", taskDate); // Append due date
-    formData.append("priority", priority); // Append priority
-    formData.append("description", description); // Append description
-    formData.append("status", status); // Append status
+    formData.append("title", title);
+    formData.append("dueDate", taskDate);
+    formData.append("priority", priority);
+    formData.append("description", description);
+    formData.append("status", status);
     if (image) {
-      formData.append("image", image); // Append the file if available
+      formData.append("image", image);
     }
 
     try {
@@ -65,7 +65,6 @@ function AddTaskModal({ show, onHide, onAddTask }) {
       console.log(response.data);
       setSuccess("Task added successfully!");
 
-      // Return the entire task object including the image URL
       if (onAddTask) {
         onAddTask(response.data);
       }
@@ -80,103 +79,205 @@ function AddTaskModal({ show, onHide, onAddTask }) {
   };
 
   return (
-    <Modal show={show} onHide={onHide} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>Add New Task</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        {error && <Alert variant="danger">{error}</Alert>}
-        {success && <Alert variant="success">{success}</Alert>}
-        <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="title">
-            <Form.Label>Title</Form.Label>
-            <Form.Control
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-          </Form.Group>
+    <>
+      {show && (
+        <>
+          {/* Dark background overlay */}
+          <div
+            className="modal-backdrop fade show"
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              backgroundColor: "rgba(0, 0, 0, 0.5)", // Dark background with opacity
+              zIndex: 1040, // Ensures it is behind the modal
+            }}
+          ></div>
 
-          <Form.Group controlId="taskDate" className="mt-3">
-            <Form.Label>Date</Form.Label>
-            <Form.Control
-              type="date"
-              value={taskDate}
-              onChange={(e) => setTaskDate(e.target.value)}
-              required
-            />
-          </Form.Group>
-
-          <Form.Group controlId="taskPriority" className="mt-3">
-            <Form.Label>Priority</Form.Label>
-            <div>
-              <Form.Check
-                inline
-                type="radio"
-                name="priority"
-                label="High"
-                value="High"
-                checked={priority === "High"}
-                onChange={(e) => setPriority(e.target.value)}
-              />
-              <Form.Check
-                inline
-                type="radio"
-                name="priority"
-                label="Medium"
-                value="Medium"
-                checked={priority === "Medium"}
-                onChange={(e) => setPriority(e.target.value)}
-              />
-              <Form.Check
-                inline
-                type="radio"
-                name="priority"
-                label="Low"
-                value="Low"
-                checked={priority === "Low"}
-                onChange={(e) => setPriority(e.target.value)}
-              />
-            </div>
-          </Form.Group>
-
-          <Form.Group controlId="taskDescription" className="mt-3">
-            <Form.Label>Description</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            />
-          </Form.Group>
-
-          <Form.Group controlId="taskImage" className="mt-3">
-            <Form.Label>Upload Image</Form.Label>
-            <Form.Control type="file" onChange={handleImageChange} />
-          </Form.Group>
-
-          <Form.Group controlId="taskStatus" className="mt-3">
-            <Form.Label>Status</Form.Label>
-            <Form.Control
-              as="select"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              required
+          <div className="modal fade show d-block" tabIndex="-1" role="dialog">
+            <div
+              className="modal-dialog modal-dialog-centered modal-lg"
+              role="document"
+              style={{ zIndex: 1050 }} // Ensure the modal is above the backdrop
             >
-              <option value="Not started">Not started</option>
-              <option value="In Progress">In progress</option>
-              <option value="Completed">Completed</option>
-            </Form.Control>
-          </Form.Group>
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Add New Task</h5>
+                  <button
+                    type="button"
+                    className="close"
+                    onClick={onHide}
+                    aria-label="Close"
+                    style={{
+                      marginLeft: "550px",
+                      border: "none",
+                      backgroundColor: "transparent",
+                      textDecoration: "underline",
+                    }}
+                  >
+                    <span aria-hidden="true">Go Back</span>
+                  </button>
+                </div>
+                <div className="modal-body">
+                  {/* Error and Success Messages */}
+                  {error && <div className="alert alert-danger">{error}</div>}
+                  {success && (
+                    <div className="alert alert-success">{success}</div>
+                  )}
 
-          <Button variant="primary" type="submit" className="mt-4">
-            Add Task
-          </Button>
-        </Form>
-      </Modal.Body>
-    </Modal>
+                  {/* Form */}
+                  <form onSubmit={handleSubmit}>
+                    {/* Title Input */}
+                    <div className="form-group">
+                      <label htmlFor="title">Title</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        required
+                      />
+                    </div>
+
+                    {/* Date Input */}
+                    <div className="form-group mt-3">
+                      <label htmlFor="taskDate">Date</label>
+                      <input
+                        type="date"
+                        className="form-control"
+                        id="taskDate"
+                        value={taskDate}
+                        onChange={(e) => setTaskDate(e.target.value)}
+                        required
+                      />
+                    </div>
+
+                    {/* Priority Radio Buttons */}
+                    <div className="form-group mt-3">
+                      <label>Priority</label>
+                      <div>
+                        <div className="form-check form-check-inline">
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name="priority"
+                            id="highPriority"
+                            value="High"
+                            checked={priority === "High"}
+                            onChange={(e) => setPriority(e.target.value)}
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="highPriority"
+                          >
+                            High
+                          </label>
+                        </div>
+                        <div className="form-check form-check-inline">
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name="priority"
+                            id="mediumPriority"
+                            value="Medium"
+                            checked={priority === "Medium"}
+                            onChange={(e) => setPriority(e.target.value)}
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="mediumPriority"
+                          >
+                            Medium
+                          </label>
+                        </div>
+                        <div className="form-check form-check-inline">
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name="priority"
+                            id="lowPriority"
+                            value="Low"
+                            checked={priority === "Low"}
+                            onChange={(e) => setPriority(e.target.value)}
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="lowPriority"
+                          >
+                            Low
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Description and File Upload Side by Side */}
+                    <div className="row mt-3">
+                      {/* Description Field */}
+                      <div className="col-md-6">
+                        <div className="form-group">
+                          <label htmlFor="taskDescription">Description</label>
+                          <textarea
+                            className="form-control"
+                            id="taskDescription"
+                            rows="3"
+                            value={description}
+                            onChange={(e) =>
+                              setDescription(e.target.value)
+                            }
+                            required
+                          ></textarea>
+                        </div>
+                      </div>
+
+                      {/* File Upload Field */}
+                      <div className="col-md-6">
+                        <div className="form-group">
+                          <label htmlFor="taskImage">Upload Image</label>
+                          <input
+                            type="file"
+                            className="form-control"
+                            id="taskImage"
+                            onChange={handleImageChange}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Status Dropdown */}
+                    <div className="form-group mt-3">
+                      <label htmlFor="taskStatus">Status</label>
+                      <select
+                        className="form-control"
+                        id="taskStatus"
+                        value={status}
+                        onChange={(e) => setStatus(e.target.value)}
+                        required
+                      >
+                        <option value="Not started">Not started</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                      </select>
+                    </div>
+
+                    {/* Submit Button */}
+                    <button
+                      type="submit"
+                      className="btn mt-4"
+                      style={{ backgroundColor: "#ff6767" }}
+                    >
+                      Done
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </>
   );
 }
 

@@ -9,6 +9,7 @@ import {
   Modal,
   Button,
   Form,
+  Image,
 } from "react-bootstrap";
 import axios from "axios";
 import { FaEdit, FaTrash } from "react-icons/fa";
@@ -42,8 +43,31 @@ function MyTasks() {
     setSelectedTask(task);
   };
 
-  const getStatusColor = () => "#ff6767";
-  const getPriorityColor = () => "#ff6767";
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Completed":
+        return "#4caf50"; // Green
+      case "In Progress":
+        return "#03a9f4"; // Blue
+      case "Not yet Started":
+        return "#f44336"; // Red
+      default:
+        return "#ff6767"; // Default color
+    }
+  };
+
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case "High":
+        return "#ff6767"; // Red
+      case "Medium":
+        return "#03a9f4"; // Blue
+      case "Low":
+        return "#03a9f4"; // Blue
+      default:
+        return "#ff6767"; // Default color
+    }
+  };
 
   const handleShowModal = () => {
     if (selectedTask) {
@@ -72,16 +96,13 @@ function MyTasks() {
         }
       )
       .then((response) => {
-        // Update the tasks state if needed
         setTasks((prevTasks) =>
           prevTasks.map((task) =>
             task._id === selectedTask._id ? response.data.task : task
           )
         );
-        setSelectedTask(response.data.task); // Update the selected task
+        setSelectedTask(response.data.task);
         handleCloseModal();
-
-        // Refresh the page to get updated data
         window.location.reload();
       })
       .catch((error) => {
@@ -106,80 +127,82 @@ function MyTasks() {
   };
 
   return (
-    <div
-      className="container"
-      style={{
-        marginTop: "20px",
-        padding: "20px",
-        backgroundColor: "#f0f2f5",
-        borderRadius: "12px",
-      }}
-    >
+    <div>
       <Container fluid className="mt-3">
         <Row>
-          <Col md={4}>
+          <Col md={5}>
             <div
               style={{
                 border: "2px solid #ddd",
-                borderRadius: "12px",
+                borderRadius: "8px",
                 padding: "15px",
                 backgroundColor: "#fff",
-                boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.05)",
               }}
             >
               <h4 className="mb-4">My Tasks</h4>
               <ListGroup>
-                {tasks.map((task) =>
-                  task ? (
-                    <ListGroup.Item
-                      key={task._id}
-                      action
-                      onClick={() => handleTaskClick(task)}
-                      className="d-flex align-items-start mb-3 p-3"
-                      style={{
-                        cursor: "pointer",
-                        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-                        height: "180px",
-                        borderRadius: "8px",
-                        backgroundColor: "#f9f9f9",
-                      }}
-                    >
-                      <div className="d-flex flex-column justify-content-between">
-                        <div>
-                          <div className="fw-bold mb-1">{task.title}</div>
+                {tasks.map((task) => (
+                  <ListGroup.Item
+                    key={task._id}
+                    action
+                    onClick={() => handleTaskClick(task)}
+                    className="d-flex align-items-start mb-3 p-3"
+                    style={{
+                      cursor: "pointer",
+                      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                      height: "auto", // Adjusted height
+                      borderRadius: "8px",
+                      backgroundColor:
+                        selectedTask?._id === task._id ? "#f9f9f9" : "#ffffff", // Highlight selected task
+                    }}
+                  >
+                    <Form.Check
+                      type="radio"
+                      name="taskSelect"
+                      id={`task-${task._id}`}
+                      checked={selectedTask?._id === task._id}
+                      onChange={() => handleTaskClick(task)}
+                      style={{ marginRight: "10px" }}
+                    />
+                    <div className="flex-grow-1">
+                      <div className="fw-bold mb-2">{task.title}</div>
+                      <div className="text-truncate mb-1">
+                        {task.description}
+                      </div>
+                      <div className="mb-2">
+                        <div className="d-flex align-items-center mb-1">
+                          <h6 className="mb-0 me-2">Priority:</h6>
                           <div
-                            className="text-truncate mb-1"
-                            style={{ maxWidth: "200px" }}
+                            style={{ color: getPriorityColor(task.priority) }}
                           >
-                            {task.description}
+                            {task.priority}
                           </div>
-                          <div className="mt-2">
-                            <Badge
-                              style={{
-                                backgroundColor: getPriorityColor(),
-                                marginRight: "5px",
-                              }}
-                            >
-                              {task.priority}
-                            </Badge>
-                            <Badge
-                              style={{
-                                backgroundColor: getStatusColor(),
-                              }}
-                            >
-                              {task.status}
-                            </Badge>
+                        </div>
+                        <div className="d-flex align-items-center">
+                          <h6 className="mb-0 me-2">Status:</h6>
+                          <div style={{ color: getStatusColor(task.status) }}>
+                            {task.status}
                           </div>
                         </div>
                       </div>
-                    </ListGroup.Item>
-                  ) : null
-                )}
+                    </div>
+                    <Image
+                      src={
+                        task.image
+                          ? `http://localhost:4001/${task.image}`
+                          : "https://cdn-icons-png.flaticon.com/512/4345/4345800.png"
+                      }
+                      rounded
+                      style={{ width: "90px", height: "90px" }}
+                    />
+                  </ListGroup.Item>
+                ))}
               </ListGroup>
             </div>
           </Col>
 
-          <Col md={8}>
+          <Col md={7}>
             <div
               style={{
                 border: "2px solid #ddd",
@@ -198,33 +221,43 @@ function MyTasks() {
                   }}
                 >
                   <Card.Body>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "flex-start",
-                      }}
-                    >
+                    <div style={{ display: "flex", alignItems: "flex-start" }}>
+                      <Image
+                        src={
+                          selectedTask.image
+                            ? `http://localhost:4001/${selectedTask.image}`
+                            : "https://cdn-icons-png.flaticon.com/512/4345/4345800.png"
+                        }
+                        rounded
+                        style={{
+                          width: "120px",
+                          height: "120px",
+                          marginRight: "15px",
+                        }}
+                      />
                       <div style={{ flex: "1" }}>
                         <Card.Title>{selectedTask.title}</Card.Title>
-
-                        <div className="mt-3">
-                          <p>
-                            <Badge
+                        <div className=" justify-content-between mb-2">
+                          <div className="me-3 mb-3">
+                            <strong>Priority:</strong>{" "}
+                            <span
                               style={{
-                                backgroundColor: getPriorityColor(),
-                                marginRight: "10px",
+                                color: getPriorityColor(selectedTask.priority),
                               }}
                             >
-                              Priority: {selectedTask.priority}
-                            </Badge>
-                            <Badge
+                              {selectedTask.priority}
+                            </span>
+                          </div>
+                          <div className="mb-3">
+                            <strong>Status:</strong>{" "}
+                            <span
                               style={{
-                                backgroundColor: getStatusColor(),
+                                color: getStatusColor(selectedTask.status),
                               }}
                             >
-                              Status: {selectedTask.status}
-                            </Badge>
-                          </p>
+                              {selectedTask.status}
+                            </span>
+                          </div>
                         </div>
                         <Card.Text className="mt-2">
                           {selectedTask.description}
@@ -233,27 +266,40 @@ function MyTasks() {
                     </div>
                   </Card.Body>
                   <div
-                    style={{
-                      position: "absolute",
-                      bottom: "10px",
-                      right: "10px",
-                      display: "flex",
-                      gap: "10px",
-                    }}
+                    className="d-flex justify-content-end"
+                    style={{ gap: "10px", marginBottom: "10px" }}
                   >
                     <Button
-                      variant="link"
-                      onClick={handleShowModal}
-                      style={{ fontSize: "20px", color: "#ff6767" }}
-                    >
-                      <FaEdit />
-                    </Button>
-                    <Button
-                      variant="link"
                       onClick={() => handleDeleteTask(selectedTask._id)}
-                      style={{ fontSize: "20px", color: "#ff6767" }}
+                      style={{
+                        color: "white",
+                        backgroundColor: "#ff6767",
+                        padding: "10px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: "5px",
+                        width: "40px",
+                        height: "40px",
+                      }}
                     >
                       <FaTrash />
+                    </Button>
+                    <Button
+                      onClick={handleShowModal}
+                      style={{
+                        color: "white",
+                        backgroundColor: "#ff6767",
+                        padding: "10px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: "5px",
+                        width: "40px",
+                        height: "40px",
+                      }}
+                    >
+                      <FaEdit />
                     </Button>
                   </div>
                 </Card>
