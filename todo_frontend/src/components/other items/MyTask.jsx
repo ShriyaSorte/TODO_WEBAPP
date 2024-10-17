@@ -267,7 +267,7 @@ function MyTasks() {
                   </Card.Body>
                   <div
                     className="d-flex justify-content-end"
-                    style={{ gap: "10px", marginBottom: "10px" }}
+                    style={{ gap: "10px", marginBottom: "10px", marginRight: "10px" }}
                   >
                     <Button
                       onClick={() => handleDeleteTask(selectedTask._id)}

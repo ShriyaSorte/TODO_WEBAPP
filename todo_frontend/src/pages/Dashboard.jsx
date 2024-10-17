@@ -15,6 +15,7 @@ import VitalTask from "../components/other items/VitalTask";
 import MyTask from "../components/other items/MyTask";
 import TaskCategories from "../components/other items/TaskCategories";
 import TaskDashboard from "../components/other items/TaskDashboard";
+// import AccountInfo from "../components/other items/AccountInfo";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -190,6 +191,7 @@ const Dashboard = () => {
             <TaskCategories />
           )}
           {location.pathname === "/dashboard" && <TaskDashboard />}
+          {/* {location.pathname === "/AccountInfo" && <AccountInfo/>} */}
         </div>
       </div>
 
