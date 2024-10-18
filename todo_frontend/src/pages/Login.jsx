@@ -101,7 +101,7 @@ const Login = () => {
               <div className="mt-3">
                 <p>
                   Don't have an account?{" "}
-                  <a href="/register" className="text-primary">
+                  <a href="/" className="text-primary">
                     Register
                   </a>
                 </p>
