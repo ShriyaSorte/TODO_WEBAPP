@@ -339,7 +339,7 @@ const TaskCategories = () => {
               </h4>
             </div>
 
-            <Table bordered>
+            <Table bordered style={{border: "1px solid black"}}>
               <thead className="text-center">
                 <tr>
                   <th>SN</th>
@@ -371,7 +371,7 @@ const TaskCategories = () => {
               </h4>
             </div>
 
-            <Table bordered>
+            <Table bordered style={{border: "1px solid black"}}>
               <thead className="text-center">
                 <tr>
                   <th>SN</th>
