@@ -6,11 +6,19 @@ import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns"; // Import date-fns to format the date
 
 const Navbar = () => {
-  // Initialize with the current date
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-
+  const [showTasks, setShowTasks] = useState(false); // State for showing tasks
   const calendarRef = useRef(null); // Ref to store the calendar component
+  const tasksRef = useRef(null); // Ref to store the tasks dropdown
+
+  // Sample high-priority tasks
+  const highPriorityTasks = [
+    "Finish project report",
+    "Prepare presentation slides",
+    "Update website content",
+    "Schedule team meeting",
+  ];
 
   // Handle date selection
   const handleDateChange = (date) => {
@@ -19,18 +27,17 @@ const Navbar = () => {
   };
 
   // Format the selected or current date for day and date separately
-  const formattedDay = format(selectedDate, "EEEE"); // Example: "Thursday"
-  const formattedDate = format(selectedDate, "MMMM dd, yyyy"); // Example: "October 03, 2024"
+  const formattedDay = format(selectedDate, "EEEE");
+  const formattedDate = format(selectedDate, "MMMM dd, yyyy");
 
   // Close the calendar when clicking outside of it
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        showCalendar &&
-        calendarRef.current &&
-        !calendarRef.current.contains(event.target)
-      ) {
+      if (showCalendar && calendarRef.current && !calendarRef.current.contains(event.target)) {
         setShowCalendar(false);
+      }
+      if (showTasks && tasksRef.current && !tasksRef.current.contains(event.target)) {
+        setShowTasks(false);
       }
     };
 
@@ -40,7 +47,7 @@ const Navbar = () => {
       // Unbind the event listener on cleanup
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showCalendar]);
+  }, [showCalendar, showTasks]);
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -53,17 +60,8 @@ const Navbar = () => {
         {/* Search Bar and Icons */}
         <div className="d-flex justify-content-center flex-grow-1">
           <form className="d-flex w-100" style={{ maxWidth: "600px" }}>
-            <input
-              className="form-control me-2"
-              type="search"
-              placeholder="Search"
-              aria-label="Search"
-            />
-            <button
-              className="btn"
-              style={{ backgroundColor: "#ff6767" }}
-              type="submit"
-            >
+            <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+            <button className="btn" style={{ backgroundColor: "#ff6767" }} type="submit">
               <FaSearch />
             </button>
           </form>
@@ -71,9 +69,31 @@ const Navbar = () => {
 
         {/* Icons Section */}
         <div className="d-flex align-items-center ms-3 position-relative">
-          <button className="btn me-2" style={{ backgroundColor: "#ff6767" }}>
+          <button className="btn me-2" style={{ backgroundColor: "#ff6767" }} onClick={() => setShowTasks((prev) => !prev)}>
             <FaBell size={20} />
           </button>
+
+          {/* Dropdown for high-priority tasks */}
+          {showTasks && (
+            <div
+              className="position-absolute"
+              style={{ top: "55px", right: "50px"}}
+              ref={tasksRef} // Attach the ref here
+            >
+              <div className="card" style={{ minWidth: "250px" }}>
+                <div className="card-body">
+                  <h5 className="card-title">High Priority Tasks</h5>
+                  <ul className="list-group list-group-flush">
+                    {highPriorityTasks.map((task, index) => (
+                      <li key={index} className="list-group-item">
+                        {task}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Calendar Icon with day and date displayed below each other */}
           <div className="d-flex align-items-center">
@@ -99,11 +119,7 @@ const Navbar = () => {
               style={{ top: "40px", right: "10px", zIndex: 1000 }}
               ref={calendarRef} // Attach the ref here
             >
-              <DatePicker
-                selected={selectedDate}
-                onChange={handleDateChange}
-                inline
-              />
+              <DatePicker selected={selectedDate} onChange={handleDateChange} inline />
             </div>
           )}
         </div>
