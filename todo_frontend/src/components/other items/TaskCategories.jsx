@@ -76,11 +76,15 @@ const TaskCategories = () => {
       // Optionally, make an API call to update the status on the server
       try {
         const token = localStorage.getItem("token");
-        await axios.put(`http://localhost:4001/api/tasks/updateTask/${updatedStatus.id}`, updatedStatus, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        await axios.put(
+          `http://localhost:4001/api/tasks/updateTask/${updatedStatus.id}`,
+          updatedStatus,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         alert("Task status updated successfully");
       } catch (error) {
         console.error("Error updating task status", error);
@@ -93,7 +97,9 @@ const TaskCategories = () => {
 
   // Open the edit priority modal and set the current priority to edit
   const handleEditPriority = (priorityId) => {
-    const priorityToEdit = taskPriority.find((priority) => priority.id === priorityId);
+    const priorityToEdit = taskPriority.find(
+      (priority) => priority.id === priorityId
+    );
     if (priorityToEdit) {
       setSelectedPriority(priorityToEdit);
       setNewPriorityName(priorityToEdit.name);
@@ -118,11 +124,15 @@ const TaskCategories = () => {
       // Optionally, make an API call to update the priority on the server
       try {
         const token = localStorage.getItem("token");
-        await axios.put(`http://localhost:4001/api/tasks/updatePriority/${updatedPriority.id}`, updatedPriority, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        await axios.put(
+          `http://localhost:4001/api/tasks/updatePriority/${updatedPriority.id}`,
+          updatedPriority,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         alert("Task priority updated successfully");
       } catch (error) {
         console.error("Error updating task priority", error);
@@ -136,11 +146,14 @@ const TaskCategories = () => {
   const handleDeleteStatus = async (statusId) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:4001/api/tasks/deleteTask/${statusId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.delete(
+        `http://localhost:4001/api/tasks/deleteTask/${statusId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       alert("Task status deleted successfully");
       // Remove the deleted status from the state
       setTaskStatus(taskStatus.filter((status) => status.id !== statusId));
@@ -153,14 +166,19 @@ const TaskCategories = () => {
   const handleDeletePriority = async (priorityId) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:4001/api/tasks/deletePriority/${priorityId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.delete(
+        `http://localhost:4001/api/tasks/deletePriority/${priorityId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       alert("Task priority deleted successfully");
       // Remove the deleted priority from the state
-      setTaskPriority(taskPriority.filter((priority) => priority.id !== priorityId));
+      setTaskPriority(
+        taskPriority.filter((priority) => priority.id !== priorityId)
+      );
     } catch (error) {
       console.error("Error deleting task priority", error);
       alert("Failed to delete task priority");
@@ -168,8 +186,14 @@ const TaskCategories = () => {
   };
 
   return (
-    <div className="task-categories-container rounded" style={{ border: "1px solid black" }}>
-      <div className="d-flex justify-content-between align-items-center mb-3" style={{ padding: "8px", marginTop: "10px" }}>
+    <div
+      className="task-categories-container rounded"
+      style={{ border: "1px solid black" }}
+    >
+      <div
+        className="d-flex justify-content-between align-items-center mb-3"
+        style={{ padding: "8px", marginTop: "10px" }}
+      >
         <div style={{ marginLeft: "30px" }}>
           <h2>Task Categories</h2>
           <Button
@@ -181,8 +205,14 @@ const TaskCategories = () => {
             Add Category
           </Button>
         </div>
-        <div className="button" style={{ color: "black", listStyle: "none", marginRight: "20px" }}>
-          <Link to={"/dashboard"} style={{ textDecoration: "underline", color: "black" }}>
+        <div
+          className="button"
+          style={{ color: "black", listStyle: "none", marginRight: "20px" }}
+        >
+          <Link
+            to={"/dashboard"}
+            style={{ textDecoration: "underline", color: "black" }}
+          >
             <span type="button">Go Back</span>
           </Link>
         </div>
@@ -195,7 +225,9 @@ const TaskCategories = () => {
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
-            <label style={{ marginBottom: "5px", color: "black" }}>Category Name</label>
+            <label style={{ marginBottom: "5px", color: "black" }}>
+              Category Name
+            </label>
             <input
               type="text"
               value={categoryName}
@@ -204,10 +236,16 @@ const TaskCategories = () => {
             />
 
             <Modal.Footer className="d-flex justify-content-start">
-              <Button onClick={handleSubmit} style={{ backgroundColor: "#f24e1e", marginRight: "10px" }}>
+              <Button
+                onClick={handleSubmit}
+                style={{ backgroundColor: "#f24e1e", marginRight: "10px" }}
+              >
                 Create
               </Button>
-              <Button onClick={() => setShowModal(false)} style={{ backgroundColor: "#f24e1e" }}>
+              <Button
+                onClick={() => setShowModal(false)}
+                style={{ backgroundColor: "#f24e1e" }}
+              >
                 Cancel
               </Button>
             </Modal.Footer>
@@ -216,13 +254,18 @@ const TaskCategories = () => {
       </Modal>
 
       {/* Modal for editing a task status */}
-      <Modal show={showEditStatusModal} onHide={() => setShowEditStatusModal(false)}>
+      <Modal
+        show={showEditStatusModal}
+        onHide={() => setShowEditStatusModal(false)}
+      >
         <Modal.Header closeButton>
           <Modal.Title>Edit Task Status</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleEditStatusSubmit}>
-            <label style={{ marginBottom: "5px", color: "black" }}>Task Status Name</label>
+            <label style={{ marginBottom: "5px", color: "black" }}>
+              Task Status Name
+            </label>
             <input
               type="text"
               value={newStatusName}
@@ -231,10 +274,16 @@ const TaskCategories = () => {
             />
 
             <Modal.Footer className="d-flex justify-content-start">
-              <Button type="submit" style={{ backgroundColor: "#f24e1e", marginRight: "10px" }}>
+              <Button
+                type="submit"
+                style={{ backgroundColor: "#f24e1e", marginRight: "10px" }}
+              >
                 Update
               </Button>
-              <Button onClick={() => setShowEditStatusModal(false)} style={{ backgroundColor: "#f24e1e" }}>
+              <Button
+                onClick={() => setShowEditStatusModal(false)}
+                style={{ backgroundColor: "#f24e1e" }}
+              >
                 Cancel
               </Button>
             </Modal.Footer>
@@ -243,13 +292,18 @@ const TaskCategories = () => {
       </Modal>
 
       {/* Modal for editing a task priority */}
-      <Modal show={showEditPriorityModal} onHide={() => setShowEditPriorityModal(false)}>
+      <Modal
+        show={showEditPriorityModal}
+        onHide={() => setShowEditPriorityModal(false)}
+      >
         <Modal.Header closeButton>
           <Modal.Title>Edit Task Priority</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleEditPrioritySubmit}>
-            <label style={{ marginBottom: "5px", color: "black" }}>Task Priority Title</label>
+            <label style={{ marginBottom: "5px", color: "black" }}>
+              Task Priority Title
+            </label>
             <input
               type="text"
               value={newPriorityName}
@@ -258,10 +312,16 @@ const TaskCategories = () => {
             />
 
             <Modal.Footer className="d-flex justify-content-start">
-              <Button type="submit" style={{ backgroundColor: "#f24e1e", marginRight: "10px" }}>
+              <Button
+                type="submit"
+                style={{ backgroundColor: "#f24e1e", marginRight: "10px" }}
+              >
                 Update
               </Button>
-              <Button onClick={() => setShowEditPriorityModal(false)} style={{ backgroundColor: "#f24e1e" }}>
+              <Button
+                onClick={() => setShowEditPriorityModal(false)}
+                style={{ backgroundColor: "#f24e1e" }}
+              >
                 Cancel
               </Button>
             </Modal.Footer>
@@ -274,10 +334,9 @@ const TaskCategories = () => {
         <div className="row justify-content-center">
           <div className="col-md-8">
             <div className="d-flex justify-content-between align-items-center mb-1">
-              <h4 style={{ textAlign: "left", marginBottom: "0px" }}>Task Status</h4>
-              <Button variant="button">
-                <span style={{ color: "#f24e1e" }}>+</span> Add Task Status
-              </Button>
+              <h4 style={{ textAlign: "left", marginBottom: "0px" }}>
+                Task Status
+              </h4>
             </div>
 
             <Table bordered>
@@ -285,7 +344,6 @@ const TaskCategories = () => {
                 <tr>
                   <th>SN</th>
                   <th>Task Status</th>
-                  <th>Action</th>
                 </tr>
               </thead>
               <tbody className="text-center">
@@ -293,29 +351,6 @@ const TaskCategories = () => {
                   <tr key={status.id}>
                     <td>{index + 1}</td>
                     <td>{status.name}</td>
-                    <td>
-                      <Button
-                        onClick={() => handleEditStatus(status.id)} // Update this line
-                        className="me-2 btn-sm"
-                        style={{
-                          backgroundColor: "#f24e1e",
-                          borderColor: "#f24e1e",
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faEdit} /> Edit
-                      </Button>
-
-                      <Button
-                        onClick={() => handleDeleteStatus(status.id)} // Update this line
-                        className="me-2 btn-sm"
-                        style={{
-                          backgroundColor: "#f24e1e",
-                          borderColor: "#f24e1e",
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faTrashAlt} /> Delete
-                      </Button>
-                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -327,11 +362,13 @@ const TaskCategories = () => {
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-md-8">
-            <div className="d-flex justify-content-between align-items-center mb-1" style={{ marginTop: "20px" }}>
-              <h4 style={{ textAlign: "left", marginBottom: "0px" }}>Task Priority</h4>
-              <Button variant="button" onClick={() => setShowEditPriorityModal(true)}>
-                <span style={{ color: "#f24e1e" }}>+</span> Add New Priority
-              </Button>
+            <div
+              className="d-flex justify-content-between align-items-center mb-1"
+              style={{ marginTop: "20px" }}
+            >
+              <h4 style={{ textAlign: "left", marginBottom: "0px" }}>
+                Task Priority
+              </h4>
             </div>
 
             <Table bordered>
@@ -339,7 +376,6 @@ const TaskCategories = () => {
                 <tr>
                   <th>SN</th>
                   <th>Task Priority</th>
-                  <th>Action</th>
                 </tr>
               </thead>
               <tbody className="text-center">
@@ -347,28 +383,6 @@ const TaskCategories = () => {
                   <tr key={priority.id}>
                     <td>{index + 1}</td>
                     <td>{priority.name}</td>
-                    <td>
-                      <Button
-                        onClick={() => handleEditPriority(priority.id)} // Now calls the priority edit function
-                        className="me-2 btn-sm"
-                        style={{
-                          backgroundColor: "#f24e1e",
-                          borderColor: "#f24e1e",
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faEdit} /> Edit
-                      </Button>
-                      <Button
-                        onClick={() => handleDeletePriority(priority.id)} // Calls the delete priority function
-                        className="me-2 btn-sm"
-                        style={{
-                          backgroundColor: "#f24e1e",
-                          borderColor: "#f24e1e",
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faTrashAlt} /> Delete
-                      </Button>
-                    </td>
                   </tr>
                 ))}
               </tbody>

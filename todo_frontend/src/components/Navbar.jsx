@@ -71,12 +71,12 @@ const Navbar = () => {
 
         {/* Icons Section */}
         <div className="d-flex align-items-center ms-3 position-relative">
-          <button className="btn me-2" style={{ backgroundColor: "#ff6767" }}>
+          {/* <button className="btn me-2" style={{ backgroundColor: "#ff6767" }}>
             <FaBell size={20} />
-          </button>
+          </button> */}
 
           {/* Calendar Icon with day and date displayed below each other */}
-          <div className="d-flex align-items-center">
+          <div className="d-flex align-items-center gap-4">
             <button
               className="btn me-2"
               style={{ backgroundColor: "#ff6767" }}
