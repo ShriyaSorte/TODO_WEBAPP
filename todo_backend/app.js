@@ -15,7 +15,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
 app.use(bodyParser.json());
 
-mongoose.connect("mongodb://localhost:27017/TODO_WEBAPP");
+mongoose.connect("mongodb+srv://shriyasorte2000:Shriya%4002@cluster0.bk2ju2n.mongodb.net/TODO_WEB_APP");
 
 mongoose.connection.once("open", () => {
   console.log("Connected to MongoDB");
